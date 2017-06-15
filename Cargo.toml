@@ -1,0 +1,18 @@
+[package]
+name = "jfs"
+version = "0.3.0"
+authors = ["Markus Kohlhase <mail@markus-kohlhase.de>"]
+license = "MIT"
+homepage = "https://github.com/flosse/rust-json-file-store"
+repository = "https://github.com/flosse/rust-json-file-store"
+documentation = "https://docs.rs/crate/jfs/"
+description = "A JSON file store"
+keywords = ["json", "file", "store", "db", "database"]
+categories = ["database"]
+
+[dependencies]
+fs2 = "0.4"
+uuid = { version = "0.4", features = ["v4"] }
+serde = "0.9"
+serde_json = "0.9"
+serde_derive = { version = "0.9" }
