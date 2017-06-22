@@ -1,16 +1,17 @@
-extern crate jfs;
+extern crate jsondb;
 extern crate uuid;
 #[macro_use]
 extern crate serde_derive;
 
 use std::io::prelude::*;
 use std::fs::{remove_dir_all, File, remove_file};
-use jfs::{Config, Store};
 use std::collections::BTreeMap;
 use std::io::{Result, ErrorKind};
 use std::path::Path;
-use uuid::Uuid;
 use std::thread;
+use uuid::Uuid;
+
+use jsondb::{Config, Store};
 
 #[derive(Serialize,Deserialize)]
 struct X {

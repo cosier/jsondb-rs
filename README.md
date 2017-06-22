@@ -1,9 +1,9 @@
 [![](http://meritbadge.herokuapp.com/jfs)](https://crates.io/crates/jfs)
-[![Build Status](https://travis-ci.org/flosse/rust-json-file-store.svg?branch=master)](https://travis-ci.org/flosse/rust-json-file-store)
-[![Dependency Status](https://dependencyci.com/github/flosse/rust-json-file-store/badge)](https://dependencyci.com/github/flosse/rust-json-file-store)
-[![Documentation](https://img.shields.io/badge/api-rustdoc-blue.svg)](https://docs.rs/crate/jfs/)
+[![Build Status](https://travis-ci.org/flosse/rust-json-file-store.svg?branch=master)](https://travis-ci.org/cosier/jsondb-rs)
+[![Dependency Status](https://dependencyci.com/github/cosier/jsondb-rs/badge)](https://dependencyci.com/github/cosier/jsondb)
+[![Documentation](https://img.shields.io/badge/api-rustdoc-blue.svg)](https://docs.rs/crate/jsondb/)
 
-# jfs
+# jsondb
 
 A simple JSON file store written in Rust.
 This is a port and drop-in replacement of the Node.js library
@@ -19,7 +19,7 @@ Use a real DB instead.
 extern crate jfs;
 #[macro_use]
 extern crate serde_derive;
-use jfs::Store;
+use jsondb::Store;
 
 #[derive(Serialize,Deserialize)]
 struct Foo {
@@ -40,14 +40,14 @@ You can also store all data in one single JSON-File:
 ```rust
 let mut cfg = jfs::Config::default();
 cfg.single = true; // false is default
-let db = jfs::Store::new_with_cfg("data",cfg);
+let db = jsondb::Store::new_with_cfg("data",cfg);
 ```
 
 If you like to pretty print the file content, set `pretty` to `true`
 and choose a number of whitespaces for the indention:
 
 ```rust
-let mut cfg = jfs::Config::default();
+let mut cfg = jsondb::Config::default();
 cfg.pretty = true;  // false is default
 cfg.indent = 4;     // 2 is default
 ```

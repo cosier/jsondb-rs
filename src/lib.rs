@@ -1,8 +1,6 @@
-// Copyright (c) 2016 Markus Kohlhase <mail@markus-kohlhase.de>
+// Copyright (c) 2017 Bailey Cosier <bailey@cosier.ca>
 
-//! A simple JSON file store written in Rust.
-//! This is a port and drop-in replacement of the Node.js library
-//! [json-file-store](https://github.com/flosse/json-file-store/).
+//! A simple JSON file database written in Rust.
 //!
 //! **WARNING**:
 //! Don't use it if you want to persist a large amount of objects.
@@ -11,10 +9,10 @@
 //! # Example
 //!
 //! ```
-//! extern crate jfs;
+//! extern crate jsondb;
 //! #[macro_use]
 //! extern crate serde_derive;
-//! use jfs::Store;
+//! use jsondb::Store;
 //!
 //! #[derive(Serialize,Deserialize)]
 //! struct Foo {
@@ -33,16 +31,16 @@
 //! You can also store all data in one single JSON-File:
 //!
 //! ```
-//! let mut cfg = jfs::Config::default();
+//! let mut cfg = jsondb::Config::default();
 //! cfg.single = true; // false is default
-//! let db = jfs::Store::new_with_cfg("data",cfg);
+//! let db = jsondb::Store::new_with_cfg("data",cfg);
 //! ```
 //!
 //! If you like to pretty print the file content, set `pretty` to `true`
 //! and choose a number of whitespaces for the indention:
 //!
 //! ```
-//! let mut cfg = jfs::Config::default();
+//! let mut cfg = jsondb::Config::default();
 //! cfg.pretty = true;  // false is default
 //! cfg.indent = 4;     // 2 is default
 //! ```

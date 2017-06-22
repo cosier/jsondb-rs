@@ -1,13 +1,13 @@
 [package]
-name = "jfs"
-version = "0.3.0"
-authors = ["Markus Kohlhase <mail@markus-kohlhase.de>"]
+name = "jsondb"
+version = "0.1.0"
+authors = ["Bailey Cosier <bailey@cosier.ca>"]
 license = "MIT"
-homepage = "https://github.com/flosse/rust-json-file-store"
-repository = "https://github.com/flosse/rust-json-file-store"
-documentation = "https://docs.rs/crate/jfs/"
-description = "A JSON file store"
-keywords = ["json", "file", "store", "db", "database"]
+homepage = "https://github.com/cosier/jsondb-rs"
+repository = "https://github.com/cosier/jsondb-rs"
+documentation = "https://docs.rs/crate/jsondb/"
+description = "A Simple, yet configurable JSON file database"
+keywords = ["json", "file", "db", "database"]
 categories = ["database"]
 
 [dependencies]
