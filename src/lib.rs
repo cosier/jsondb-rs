@@ -68,16 +68,15 @@ use fs2::FileExt;
 
 type Object = Map<String, Value>;
 
-#[derive(Clone,Copy)]
-pub struct Config {
+#[derive(Debug, Clone, Copy)]
+struct Config {
     pub pretty: bool,
     pub indent: u32,
     pub single: bool,
 }
 
-#[derive(Clone,Copy, Serialize, Deserialize)]
-pub struct EmptyConfig {
-}
+#[derive(Clone, Copy, Serialize, Deserialize)]
+struct EmptyConfig {}
 
 impl Default for Config {
     fn default() -> Config {
@@ -89,8 +88,8 @@ impl Default for Config {
     }
 }
 
-#[derive(Clone)]
-pub struct Store {
+#[derive(Debug, Clone)]
+struct Store {
     path: PathBuf,
     cfg: Config,
 }
@@ -121,7 +120,9 @@ impl Store {
         }
         let b = indent.into_iter().collect::<String>().into_bytes();
         let mut s = Serializer::with_formatter(writer, PrettyFormatter::with_indent(&b));
-        value.serialize(&mut s).map_err(|err| Error::new(ErrorKind::InvalidData, err))?;
+        value.serialize(&mut s).map_err(|err| {
+            Error::new(ErrorKind::InvalidData, err)
+        })?;
         Ok(())
     }
 
@@ -143,11 +144,13 @@ impl Store {
     fn save_object_to_file<T: Serialize>(&self, obj: &T, file_name: &PathBuf) -> Result<()> {
         let json_string = self.object_to_string(obj)?;
         let tmp_filename = Path::new(&Uuid::new_v4().to_string()).with_extension("tmp");
-        let file = OpenOptions::new().write(true)
+        let file = OpenOptions::new()
+            .write(true)
             .create(true)
             .truncate(false)
             .open(&file_name)?;
-        let mut tmp_file = OpenOptions::new().write(true)
+        let mut tmp_file = OpenOptions::new()
+            .write(true)
             .create(true)
             .truncate(true)
             .open(&tmp_filename)?;
@@ -155,9 +158,7 @@ impl Store {
         tmp_file.lock_exclusive()?;
 
         match Write::write_all(&mut tmp_file, json_string.as_bytes()) {
-            Err(err) => {
-                return Err(err)
-            },
+            Err(err) => return Err(err),
             Ok(_) => {
                 let fp = file_name.to_str().unwrap().to_string();
 
@@ -172,7 +173,12 @@ impl Store {
         let file_str = file_name.to_str().unwrap().to_string();
 
 
-        let mut f = OpenOptions::new().read(true).write(true).create(true).open(&file_name).unwrap();
+        let mut f = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create(true)
+            .open(&file_name)
+            .unwrap();
 
         // let mut f = match(oFile) {
         //     Ok(file) => {
@@ -201,10 +207,8 @@ impl Store {
     fn get_json_from_file(&self, file_name: &PathBuf) -> Result<Value> {
         let path = file_name.to_str().unwrap().to_string();
 
-        let mut s:String = Store::get_string_from_file(file_name)?;
-        let err_handler = |err| {
-            return Error::new(ErrorKind::Other, err);
-        };
+        let mut s: String = Store::get_string_from_file(file_name)?;
+        let err_handler = |err| { return Error::new(ErrorKind::Other, err); };
 
         if (s == "") {
             s = "{}".to_string();
@@ -214,7 +218,9 @@ impl Store {
     }
 
     fn get_object_from_json(json: &Value) -> Result<&Object> {
-        json.as_object().ok_or_else(|| Error::new(ErrorKind::InvalidData, "invalid file content"))
+        json.as_object().ok_or_else(|| {
+            Error::new(ErrorKind::InvalidData, "invalid file content")
+        })
     }
 
     pub fn new(name: &str) -> Result<Store> {
@@ -251,7 +257,9 @@ impl Store {
             let json = self.get_json_from_file(&self.path)?;
             let o = Store::get_object_from_json(&json)?;
             let mut x = o.clone();
-            let j = serde_json::to_value(&obj).map_err(|err| Error::new(ErrorKind::Other, err))?;
+            let j = serde_json::to_value(&obj).map_err(|err| {
+                Error::new(ErrorKind::Other, err)
+            })?;
             x.insert(id.to_string(), j);
             self.save_object_to_file(&x, &self.path)?;
 
@@ -268,7 +276,10 @@ impl Store {
     pub fn get<T: Deserialize>(&self, id: &str) -> Result<T> {
         let json = self.get_json_from_file(&self.id_to_path(id))?;
         let o = if self.cfg.single {
-            let x = json.get(id).ok_or(Error::new(ErrorKind::NotFound, "no such object"))?;
+            let x = json.get(id).ok_or(Error::new(
+                ErrorKind::NotFound,
+                "no such object",
+            ))?;
             x.clone()
         } else {
             json
@@ -294,23 +305,23 @@ impl Store {
                 Err(Error::new(ErrorKind::NotFound, "invalid path"))
             } else {
                 let entries = read_dir(&self.path)?;
-                Ok(entries.filter_map(|e| {
-                        e.and_then(|x| {
-                                x.metadata().and_then(|m| {
-                                    if m.is_file() {
-                                        self.path_buf_to_id(x.path())
-                                    } else {
-                                        Err(Error::new(ErrorKind::Other, "not a file"))
-                                    }
+                Ok(
+                    entries
+                        .filter_map(|e| {
+                            e.and_then(|x| {
+                                x.metadata().and_then(|m| if m.is_file() {
+                                    self.path_buf_to_id(x.path())
+                                } else {
+                                    Err(Error::new(ErrorKind::Other, "not a file"))
                                 })
-                            })
-                            .ok()
-                    })
-                    .filter_map(|id| match self.get(&id) {
-                        Ok(x) => Some((id.clone(), x)),
-                        _ => None,
-                    })
-                    .collect::<BTreeMap<String, T>>())
+                            }).ok()
+                        })
+                        .filter_map(|id| match self.get(&id) {
+                            Ok(x) => Some((id.clone(), x)),
+                            _ => None,
+                        })
+                        .collect::<BTreeMap<String, T>>(),
+                )
             }
         }
     }

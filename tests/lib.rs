@@ -13,20 +13,20 @@ use uuid::Uuid;
 
 use jsondb::{Config, Store};
 
-#[derive(Serialize,Deserialize)]
+#[derive(Serialize, Deserialize)]
 struct X {
     x: u32,
 }
 
-#[derive(Serialize,Deserialize)]
+#[derive(Serialize, Deserialize)]
 struct Y {
     y: i32,
 }
 
-#[derive(Serialize,Deserialize)]
+#[derive(Serialize, Deserialize)]
 struct Empty {}
 
-#[derive(Serialize,Deserialize)]
+#[derive(Serialize, Deserialize)]
 struct Z {
     z: f32,
 }
@@ -157,12 +157,12 @@ fn pretty_print_file_content() {
     cfg.pretty = true;
     let db = Store::new_with_cfg(&dir, cfg).unwrap();
 
-    #[derive(Deserialize,Serialize)]
+    #[derive(Deserialize, Serialize)]
     struct SubStruct {
         c: u32,
     };
 
-    #[derive(Deserialize,Serialize)]
+    #[derive(Deserialize, Serialize)]
     struct MyData {
         a: String,
         b: SubStruct,
@@ -209,13 +209,13 @@ fn all() {
     let db = Store::new(&dir).unwrap();
 
     #[cfg(feature = "serde_json")]
-    #[derive(Deserialize,Serialize)]
+    #[derive(Deserialize, Serialize)]
     struct X {
         x: u32,
         y: u32,
     };
     #[cfg(feature = "rustc-serialize")]
-    #[derive(RustcEncodable,RustcDecodable)]
+    #[derive(RustcEncodable, RustcDecodable)]
     struct X {
         x: u32,
         y: u32,
@@ -291,8 +291,10 @@ fn single_save() {
     let y = Y { y: 4 };
     db.save_with_id(&x, "x").unwrap();
     db.save_with_id(&y, "y").unwrap();
-    assert_eq!(read_from_test_file(&file_name),
-               "{\"x\":{\"x\":3},\"y\":{\"y\":4}}");
+    assert_eq!(
+        read_from_test_file(&file_name),
+        "{\"x\":{\"x\":3},\"y\":{\"y\":4}}"
+    );
     assert!(teardown(&file_name).is_ok());
 }
 
@@ -336,7 +338,7 @@ fn single_save_without_file_name_ext() {
     cfg.single = true;
     Store::new_with_cfg(&dir, cfg).unwrap();
     assert!(Path::new(&format!("{}.json", dir)).exists());
-    assert!(teardown(&format!("{}.json",dir)).is_ok());
+    assert!(teardown(&format!("{}.json", dir)).is_ok());
 }
 
 #[test]
