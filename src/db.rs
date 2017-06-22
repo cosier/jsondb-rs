@@ -1,19 +1,18 @@
 
-use serde::{Serialize, Deserialize};
-use serde_json;
-use serde_json::Value;
-use serde_json::value::Map;
-use serde_json::ser::{Serializer, PrettyFormatter};
-
 use std::io::prelude::*;
 use std::io::{Error, ErrorKind, Result};
-use uuid::Uuid;
-
 
 use std::path::{Path, PathBuf};
 use std::fs::{read_dir, rename, create_dir_all, remove_file, metadata, OpenOptions};
 use std::collections::BTreeMap;
 use fs2::FileExt;
+use uuid::Uuid;
+
+use serde_json;
+use serde_json::Value;
+use serde_json::value::Map;
+use serde_json::ser::{Serializer, PrettyFormatter};
+use serde::{Serialize, Deserialize};
 
 type Object = Map<String, Value>;
 use config::Config;
@@ -26,6 +25,20 @@ pub struct Database {
 }
 
 impl Database {
+
+    pub fn from_file(json_file_path: String) -> Database {
+        let config = Config {
+            indent: 4,
+            pretty: true,
+            single: true
+        };
+
+        Database {
+            path: PathBuf::from(json_file_path),
+            cfg: config
+        }
+    }
+
     fn id_to_path(&self, id: &str) -> PathBuf {
         if self.cfg.single {
             self.path.clone()
