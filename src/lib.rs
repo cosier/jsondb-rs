@@ -11,6 +11,6 @@ extern crate serde_json;
 extern crate serde_derive;
 
 mod config;
-mod db;
+pub mod db;
 
 
